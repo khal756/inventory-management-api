@@ -16,9 +16,10 @@ This project is an inventory management API built using Python and Flask. It all
 - Update product quantities.
 - Delete products.
 - Search for external products using a barcode.
+- Import external products into inventory.
 - Manage inventory using a command-line interface.
 - Validate product input.
-- Returns appropriate HTTP status codes for successful operations and missing products.
+- Return appropriate HTTP status codes.
 
 ## How to Run the Project
 
@@ -47,22 +48,25 @@ This project is an inventory management API built using Python and Flask. It all
    ```
 
 ## API Endpoints
+- `GET /` – Check if the API is running.
 - `GET /api/products` – View all products.
 - `POST /api/products` – Add a product.
 - `PATCH /api/products/<product_id>` – Update product quantity.
 - `DELETE /api/products/<product_id>` – Delete a product.
 - `GET /api/external-product/<barcode>` – Get external product information.
-- `GET /` – Check if the API is running.
+- `POST /api/import-product/<barcode>` – Import an external product into inventory.
 
 ## Testing
-I used Pytest to test the API. All 6 tests passed:
+I used Pytest to test the API. All 7 tests passed.
 
-- Test the home endpoint.
-- Test retrieving products.
-- Test adding a product.
-- Test updating a product.
-- Test deleting a product.
-- Test deleting a product that does not exist.
+The tests cover:
+- The home endpoint.
+- Retrieving products.
+- Adding a product.
+- Updating product quantity.
+- Deleting a product.
+- Handling a product that does not exist.
+- Importing an external product.
 
 Run the tests using:
 
@@ -71,6 +75,6 @@ python -m pytest -v
 ```
 
 ## Conclusion
-This project helped me practise building REST APIs with Flask, performing CRUD operations, using an external API, creating a CLI, and writing automated tests.
+This project helped me practise building REST APIs with Flask, performing CRUD operations, integrating an external API, creating a CLI, and writing automated tests.
 
-**Note:** Products are currently stored in a Python list, so changes are not permanently saved when the application restarts.
+**Note:** Products are stored in a Python list, so changes are not permanently saved when the application restarts.
