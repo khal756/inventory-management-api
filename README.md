@@ -18,6 +18,7 @@ This project is an inventory management API built using Python and Flask. It all
 - Search for external products using a barcode.
 - Manage inventory using a command-line interface.
 - Validate product input.
+- Returns appropriate HTTP status codes for successful operations and missing products.
 
 ## How to Run the Project
 
