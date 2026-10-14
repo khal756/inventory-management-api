@@ -1,6 +1,7 @@
 
 import pytest
 from app import app, products
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -55,3 +56,23 @@ def test_delete_product(client):
 def test_product_not_found(client):
     response = client.delete("/api/products/999")
     assert response.status_code == 404
+
+
+
+@patch("app.requests.get")
+def test_import_external_product(mock_get, client):
+    mock_get.return_value.json.return_value = {
+        "status": 1,
+        "product": {
+            "product_name": "Test Chocolate",
+            "brands": "Test Brand"
+        }
+    }
+    mock_get.return_value.raise_for_status.return_value = None
+
+    response = client.post("/api/import-product/123456789")
+
+    assert response.status_code == 201
+    assert response.json["product"]["name"] == "Test Chocolate"
+    assert response.json["product"]["price"] == 0
+    assert response.json["product"]["quantity"] == 0

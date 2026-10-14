@@ -73,6 +73,53 @@ def delete_product(product_id):
     else:
         return jsonify({"message": "Product not found"}), 404
 
+
+@app.route("/api/import-product/<barcode>", methods=["POST"])
+def import_external_product(barcode):
+    url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
+
+    try:
+        response = requests.get(
+            url,
+            headers={"User-Agent": "InventoryManagementStudent/1.0"},
+            timeout=10
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("status") != 1:
+            return jsonify({"error": "Product not found"}), 404
+
+        external_product = data.get("product", {})
+        name = external_product.get("product_name")
+
+        if not name:
+            return jsonify({"error": "Product has no name"}), 400
+
+        new_id = max((product["id"] for product in products), default=0) + 1
+
+        new_product = {
+            "id": new_id,
+            "name": name,
+            "price": 0,
+            "quantity": 0
+        }
+
+        products.append(new_product)
+
+        return jsonify({
+            "message": "External product added to inventory",
+            "product": new_product
+        }), 201
+
+    except requests.RequestException:
+        return jsonify({"error": "External API unavailable"}), 502
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
 @app.route("/api/external-product/<barcode>", methods=["GET"])
 def get_external_product(barcode):
     url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
@@ -103,6 +150,3 @@ def get_external_product(barcode):
         "details": str(error)
     }), 502
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
